@@ -1,0 +1,165 @@
+{
+  "audit_version": "incremental_2026_delta_probe_v1",
+  "window_start": "2026-05-07",
+  "window_end": "2026-09-19",
+  "phrase": "karar",
+  "reported_total": 18306,
+  "schema": {
+    "payload_keys": [
+      "data",
+      "metadata"
+    ],
+    "data_type": "dict",
+    "data_keys": [
+      "emsalKararList",
+      "start",
+      "total"
+    ],
+    "list_field": "emsalKararList",
+    "item_keys": [
+      "birimAdi",
+      "birimId",
+      "documentId",
+      "esasNo",
+      "esasNoSira",
+      "esasNoYil",
+      "itemType",
+      "kararNo",
+      "kararNoSira",
+      "kararNoYil",
+      "kararTarihi",
+      "kararTarihiStr",
+      "kararTuru",
+      "kesinlesmeDurumu"
+    ],
+    "item_types": {
+      "birimAdi": "str",
+      "birimId": "null",
+      "documentId": "str",
+      "esasNo": "str",
+      "esasNoSira": "int",
+      "esasNoYil": "int",
+      "itemType": "dict",
+      "kararNo": "str",
+      "kararNoSira": "int",
+      "kararNoYil": "int",
+      "kararTarihi": "str",
+      "kararTarihiStr": "str",
+      "kararTuru": "null",
+      "kesinlesmeDurumu": "null"
+    }
+  },
+  "safe_first_page_metadata": [
+    {
+      "documentId": "1226258600",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6040",
+      "kararNo": "2026/5825",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226258700",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6026",
+      "kararNo": "2026/5824",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226260000",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6101",
+      "kararNo": "2026/5791",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226259200",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/5958",
+      "kararNo": "2026/5820",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226262100",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/5787",
+      "kararNo": "2026/5811",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226259100",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/5972",
+      "kararNo": "2026/5821",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226260100",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6157",
+      "kararNo": "2026/5792",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226262000",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6257",
+      "kararNo": "2026/5799",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226258300",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6164",
+      "kararNo": "2026/5828",
+      "birimAdi": "1. Hukuk Dairesi"
+    },
+    {
+      "documentId": "1226258400",
+      "itemType": {
+        "name": "YARGITAYKARARI",
+        "description": "Yargıtay Kararı"
+      },
+      "kararTarihi": "2026-09-06T21:00:00.000+00:00",
+      "esasNo": "2026/6061",
+      "kararNo": "2026/5827",
+      "birimAdi": "1. Hukuk Dairesi"
+    }
+  ],
+  "raw_response_persisted": false
+}
