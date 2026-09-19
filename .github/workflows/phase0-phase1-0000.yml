@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/phase0-phase1-0000.yml"
+      - "scripts/audit_one_shard.py"
+      - "source_manifest.json"
 
 permissions:
   contents: write
