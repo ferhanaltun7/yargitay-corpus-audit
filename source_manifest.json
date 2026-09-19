@@ -3,11 +3,101 @@
   "dataset_type": "huggingface_dataset",
   "source": "yargitay",
   "revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "conversion_ref": "refs/convert/parquet",
   "expected_rows": 9820145,
   "expected_year_min": 1997,
   "expected_year_max": 2026,
   "expected_shard_count": 17,
+  "expected_total_parquet_bytes": 3270671310,
   "license_label": "cc0-1.0",
+  "verified_mirror": "serdarsrts/turkish-court-decisions-duplicate",
+  "shards": [
+    {
+      "path": "yargitay/train/0000.parquet",
+      "size_bytes": 203262814,
+      "lfs_sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d"
+    },
+    {
+      "path": "yargitay/train/0001.parquet",
+      "size_bytes": 212822247,
+      "lfs_sha256": "ba2aefda121c0c47e069050efde7c4f7979fd95cdab4bf1f075f98882de9e018"
+    },
+    {
+      "path": "yargitay/train/0002.parquet",
+      "size_bytes": 197307530,
+      "lfs_sha256": "c13d9b719c03759a07a734f94d926196b52465d21da27107940f2e1c6aa11d78"
+    },
+    {
+      "path": "yargitay/train/0003.parquet",
+      "size_bytes": 204007228,
+      "lfs_sha256": "cf29d726b1626043814be0e552c6f91e0a755f0363d917e1d5b85ddc40fce291"
+    },
+    {
+      "path": "yargitay/train/0004.parquet",
+      "size_bytes": 208620752,
+      "lfs_sha256": "f00dfb6f832d99cf68e0566fe55c3eb8a3d5cebf5c092b15e559c5813b46be8c"
+    },
+    {
+      "path": "yargitay/train/0005.parquet",
+      "size_bytes": 207822181,
+      "lfs_sha256": "51cbe579050e9bd665925a41a1a1fd10a29bd1615cf951c2b8cc6f785c483ebc"
+    },
+    {
+      "path": "yargitay/train/0006.parquet",
+      "size_bytes": 200246321,
+      "lfs_sha256": "3e82bd819662163ba7ae488e25622e3363b68e397363bf064ea84e0263f7bc76"
+    },
+    {
+      "path": "yargitay/train/0007.parquet",
+      "size_bytes": 209990435,
+      "lfs_sha256": "75f28f4a67681969240218fd638f927b3b5c889dfd50710fcf1d95adeed046c7"
+    },
+    {
+      "path": "yargitay/train/0008.parquet",
+      "size_bytes": 210041383,
+      "lfs_sha256": "982e5aa49df1b6f99185c53b02f1b06ae0559d189d7fb00070c9857355bd0726"
+    },
+    {
+      "path": "yargitay/train/0009.parquet",
+      "size_bytes": 194213547,
+      "lfs_sha256": "53a9afe88fd89390c615d723dd78eca84fd10fc5781ef564ec8e3648b492b56d"
+    },
+    {
+      "path": "yargitay/train/0010.parquet",
+      "size_bytes": 203451140,
+      "lfs_sha256": "d497b1714b614dbbd21402bb39382dfdea68444f2f38bf040c3f72435bc34f77"
+    },
+    {
+      "path": "yargitay/train/0011.parquet",
+      "size_bytes": 192455102,
+      "lfs_sha256": "d2e18ae058a6dc94c606612c8d12bce6a27ed62f7e6719f92cb69b2d41f0a3da"
+    },
+    {
+      "path": "yargitay/train/0012.parquet",
+      "size_bytes": 190238895,
+      "lfs_sha256": "1144f300c68ea4c8fdb281da53bab340539bafbe098df77f7a47aaa1b23bc340"
+    },
+    {
+      "path": "yargitay/train/0013.parquet",
+      "size_bytes": 195441702,
+      "lfs_sha256": "010e63a4c91f9709a20d9330bbf2998ddbb39e643c82ca8f80e53c05b432c111"
+    },
+    {
+      "path": "yargitay/train/0014.parquet",
+      "size_bytes": 195320269,
+      "lfs_sha256": "1e89eb74effaad1f32547e1d3cead1672dc012bc1138737e025ff20c6a66bd95"
+    },
+    {
+      "path": "yargitay/train/0015.parquet",
+      "size_bytes": 187952620,
+      "lfs_sha256": "2ba1231dd25ea600cea4ec9d54dc3d718c51df28a21ecc3b5868dea63338a9eb"
+    },
+    {
+      "path": "yargitay/train/0016.parquet",
+      "size_bytes": 57477144,
+      "lfs_sha256": "205481193de56643c908421a5811c8ff3907894c2d83db5680cf22dc1447acd2"
+    }
+  ],
   "pinned_example_shard": {
     "path": "yargitay/train/0000.parquet",
     "size_bytes": 203262814,
