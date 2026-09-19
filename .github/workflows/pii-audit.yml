@@ -1,0 +1,104 @@
+name: PII Direct-Identifier Screening
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/pii-audit.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  pii:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download and verify all 17 pinned Yargitay shards
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+
+          manifest = json.loads(Path("source_manifest.json").read_text(encoding="utf-8"))
+          dataset = manifest["verified_mirror"]
+          expected = {Path(x["path"]).name: x for x in manifest["shards"]}
+
+          api = "https://datasets-server.huggingface.co/parquet?" + urlencode({"dataset": dataset})
+          req = Request(api, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+          with urlopen(req, timeout=60) as r:
+              payload = json.load(r)
+
+          entries = [
+              x for x in payload.get("parquet_files", [])
+              if x.get("config") == "yargitay" and x.get("split") == "train"
+          ]
+          by_name = {Path(x["filename"]).name: x for x in entries}
+          if set(by_name) != set(expected):
+              raise SystemExit("Mirror shard set does not match pinned manifest")
+
+          raw_dir = Path("data/raw/yargitay/train")
+          raw_dir.mkdir(parents=True, exist_ok=True)
+
+          def download_one(name):
+              target = raw_dir / name
+              h = hashlib.sha256()
+              size = 0
+              req2 = Request(by_name[name]["url"], headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+              with urlopen(req2, timeout=300) as r, target.open("wb") as w:
+                  while True:
+                      block = r.read(8 * 1024 * 1024)
+                      if not block:
+                          break
+                      w.write(block)
+                      h.update(block)
+                      size += len(block)
+              exp = expected[name]
+              if size != exp["size_bytes"] or h.hexdigest() != exp["lfs_sha256"]:
+                  raise RuntimeError(f"Verification failed for {name}")
+              print("VERIFIED", name)
+
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              futures = [pool.submit(download_one, name) for name in sorted(expected)]
+              for fut in as_completed(futures):
+                  fut.result()
+          PY
+
+      - name: Run aggregate PII screening
+        run: python scripts/pii_audit.py
+
+      - name: Upload PII audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pii-direct-identifier-screening
+          path: audit/pii/
+
+      - name: Commit aggregate PII results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/pii
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "Add aggregate PII screening results [skip ci]"
+          git pull --rebase origin main
+          git push
