@@ -1,0 +1,46 @@
+name: Bedesten Year-Total Census Probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bedesten-year-totals.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run official Bedesten year-total probe
+        run: python scripts/bedesten_year_totals.py
+
+      - name: Upload census artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bedesten-year-total-census
+          path: audit/bedesten_year_totals/
+
+      - name: Commit census results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/bedesten_year_totals
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "Add Bedesten year-total census results [skip ci]"
+          git pull --rebase origin main
+          git push
