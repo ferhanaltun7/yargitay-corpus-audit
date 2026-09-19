@@ -1,0 +1,28 @@
+{
+  "audit_version": "contextual_pii_screen_v1",
+  "source_revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "sample_design": "deterministic 50k: 40k from 2016-2026 + 10k historical",
+  "result": {
+    "rows_sampled": 50000,
+    "modern_rows": 40000,
+    "row_counts": {
+      "party_role_label": 30269,
+      "address_signal": 1538,
+      "health_sensitive_signal": 146,
+      "minor_signal": 1739,
+      "victim_signal": 6785,
+      "name_like_after_role": 31042
+    },
+    "rates": {
+      "party_role_label": 0.60538,
+      "address_signal": 0.03076,
+      "health_sensitive_signal": 0.00292,
+      "minor_signal": 0.03478,
+      "victim_signal": 0.1357,
+      "name_like_after_role": 0.62084
+    }
+  },
+  "raw_matches_committed": false,
+  "interpretation": "Signals quantify contextual-PII exposure risk; regex hits are not adjudicated personal-data findings.",
+  "next_gate": "NER/manual review sample required before broad public-facing indexing."
+}
