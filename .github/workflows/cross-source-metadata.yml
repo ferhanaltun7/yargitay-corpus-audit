@@ -1,0 +1,110 @@
+name: Cross Source Yargitay Metadata Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cross-source-metadata.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download candidate 17 pinned shards and external metadata parquet
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+
+          UA={"User-Agent":"yargitay-corpus-audit/1.0"}
+          manifest=json.loads(Path("source_manifest.json").read_text())
+          expected={Path(x["path"]).name:x for x in manifest["shards"]}
+
+          def parquet_entries(dataset, config=None):
+              url="https://datasets-server.huggingface.co/parquet?"+urlencode({"dataset":dataset})
+              with urlopen(Request(url,headers=UA),timeout=60) as r:
+                  p=json.load(r)
+              xs=p.get("parquet_files",[])
+              if config is not None:
+                  xs=[x for x in xs if x.get("config")==config and x.get("split")=="train"]
+              else:
+                  xs=[x for x in xs if x.get("split")=="train"]
+              return xs
+
+          cand_entries=parquet_entries(manifest["verified_mirror"],"yargitay")
+          cand_by={Path(x["filename"]).name:x for x in cand_entries}
+          if set(cand_by)!=set(expected):
+              raise SystemExit("Candidate shard set mismatch")
+
+          cdir=Path("data/raw/yargitay/train"); cdir.mkdir(parents=True,exist_ok=True)
+          def dl_candidate(name):
+              target=cdir/name; h=hashlib.sha256(); size=0
+              with urlopen(Request(cand_by[name]["url"],headers=UA),timeout=300) as r, target.open("wb") as w:
+                  while True:
+                      b=r.read(8*1024*1024)
+                      if not b: break
+                      w.write(b); h.update(b); size+=len(b)
+              exp=expected[name]
+              if size!=exp["size_bytes"] or h.hexdigest()!=exp["lfs_sha256"]:
+                  raise RuntimeError("Candidate verification failed "+name)
+              return name
+
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              for fut in as_completed([pool.submit(dl_candidate,n) for n in sorted(expected)]):
+                  print("CANDIDATE",fut.result())
+
+          external="muhammedturan/turk-ictihat-kararlari-fulltext"
+          ext_entries=parquet_entries(external)
+          if not ext_entries:
+              raise SystemExit("No external parquet entries")
+          edir=Path("data/raw/external_muhammedturan"); edir.mkdir(parents=True,exist_ok=True)
+
+          def dl_ext(i,e):
+              target=edir/f"{i:04d}.parquet"
+              with urlopen(Request(e["url"],headers=UA),timeout=300) as r, target.open("wb") as w:
+                  while True:
+                      b=r.read(8*1024*1024)
+                      if not b: break
+                      w.write(b)
+              return target.name,target.stat().st_size
+
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              for fut in as_completed([pool.submit(dl_ext,i,e) for i,e in enumerate(ext_entries)]):
+                  print("EXTERNAL",*fut.result())
+          PY
+
+      - name: Run cross-source comparison
+        run: python scripts/cross_source_metadata_audit.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-source-yargitay-metadata-audit
+          path: audit/cross_source_metadata/
+
+      - name: Commit aggregate results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/cross_source_metadata
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add cross-source Yargitay metadata audit [skip ci]"
+          git pull --rebase origin main
+          git push
