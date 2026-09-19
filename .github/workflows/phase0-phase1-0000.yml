@@ -27,16 +27,23 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download pinned 203 MB shard
+      - name: Download conversion-ref shard
         shell: bash
         run: |
-          mkdir -p data/raw/yargitay/train
-          curl -L --fail --retry 5 --retry-delay 3 \
-            "https://huggingface.co/datasets/hamzabagirsakci/turkish-court-decisions/resolve/4df66ee63c4adbcae8434787718c7b42381a69dd/yargitay/train/0000.parquet?download=true" \
-            -o data/raw/yargitay/train/0000.parquet
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          p = hf_hub_download(
+              repo_id="hamzabagirsakci/turkish-court-decisions",
+              repo_type="dataset",
+              revision="refs/convert/parquet",
+              filename="yargitay/train/0000.parquet",
+              local_dir="data/raw",
+          )
+          print(p)
+          PY
           ls -lh data/raw/yargitay/train/0000.parquet
 
-      - name: Run Phase 0-1 audit
+      - name: Run Phase 0-1 audit and verify pinned hash
         run: |
           rm -rf audit/phase0_phase1_0000
           python scripts/audit_one_shard.py \
