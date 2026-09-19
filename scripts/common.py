@@ -10,5 +10,6 @@ MANIFEST = json.loads((ROOT / "source_manifest.json").read_text(encoding="utf-8"
 for p in (RAW, AUDIT, REPORTS):
     p.mkdir(parents=True, exist_ok=True)
 
+
 def shard_glob():
-    return str((RAW / "yargitay" / "train" / "*.parquet").resolve()).replace("\\\\", "/")
+    return (RAW / "yargitay" / "train" / "*.parquet").as_posix()
