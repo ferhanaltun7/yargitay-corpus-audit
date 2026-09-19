@@ -1,0 +1,115 @@
+{
+  "purpose": "learn Bedesten broad-query semantics; NOT a census",
+  "endpoint": "https://bedesten.adalet.gov.tr/emsal-karar/searchDocuments",
+  "cadence_seconds": 5.0,
+  "results": [
+    {
+      "year": 2016,
+      "phrase": "karar",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2016,
+      "phrase": "esas",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2016,
+      "phrase": "mahkeme",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2016,
+      "phrase": "karar OR esas",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2016,
+      "phrase": "karar OR esas OR mahkeme",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2016,
+      "phrase": "dosya",
+      "corpus_rows": 654309,
+      "status": "ok",
+      "total": 654396,
+      "returned": 1,
+      "corpus_over_query_total": 0.9998670529770964
+    },
+    {
+      "year": 2025,
+      "phrase": "karar",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    },
+    {
+      "year": 2025,
+      "phrase": "esas",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    },
+    {
+      "year": 2025,
+      "phrase": "mahkeme",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    },
+    {
+      "year": 2025,
+      "phrase": "karar OR esas",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    },
+    {
+      "year": 2025,
+      "phrase": "karar OR esas OR mahkeme",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    },
+    {
+      "year": 2025,
+      "phrase": "dosya",
+      "corpus_rows": 313478,
+      "status": "ok",
+      "total": 317732,
+      "returned": 1,
+      "corpus_over_query_total": 0.9866113579998238
+    }
+  ]
+}
