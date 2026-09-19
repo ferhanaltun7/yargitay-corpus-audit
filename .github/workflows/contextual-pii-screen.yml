@@ -1,0 +1,75 @@
+name: Contextual PII Screening
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/contextual-pii-screen.yml"
+      - "scripts/contextual_pii_screen.py"
+permissions:
+  contents: write
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Download and verify candidate shards
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,time
+          from concurrent.futures import ThreadPoolExecutor,as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request,urlopen
+          m=json.loads(Path("source_manifest.json").read_text())
+          exp={Path(x["path"]).name:x for x in m["shards"]}
+          api="https://datasets-server.huggingface.co/parquet?"+urlencode({"dataset":m["verified_mirror"]})
+          with urlopen(Request(api,headers={"User-Agent":"yargitay-corpus-audit/1.0"}),timeout=60) as r:
+              p=json.load(r)
+          xs=[x for x in p["parquet_files"] if x.get("config")=="yargitay" and x.get("split")=="train"]
+          by={Path(x["filename"]).name:x for x in xs}
+          out=Path("data/raw/yargitay/train");out.mkdir(parents=True,exist_ok=True)
+          def one(n):
+              last=None
+              for attempt in range(5):
+                  try:
+                      h=hashlib.sha256();size=0;t=out/n
+                      with urlopen(Request(by[n]["url"],headers={"User-Agent":"yargitay-corpus-audit/1.0"}),timeout=300) as r,t.open("wb") as w:
+                          while True:
+                              b=r.read(8*1024*1024)
+                              if not b:break
+                              w.write(b);h.update(b);size+=len(b)
+                      e=exp[n]
+                      if size!=e["size_bytes"] or h.hexdigest()!=e["lfs_sha256"]:raise RuntimeError(n)
+                      return
+                  except Exception as ex:
+                      last=ex
+                      time.sleep(min(2**attempt,15))
+              raise last
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              for f in as_completed([pool.submit(one,n) for n in sorted(exp)]):f.result()
+          PY
+      - name: Run contextual PII screen
+        run: python scripts/contextual_pii_screen.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contextual-pii-screen
+          path: audit/contextual_pii/
+      - name: Commit aggregate result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/contextual_pii
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add contextual PII screening results [skip ci]"
+          git pull --rebase origin main
+          git push
