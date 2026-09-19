@@ -2,6 +2,7 @@ import csv
 import json
 import math
 import re
+import sys
 import time
 from difflib import SequenceMatcher
 from html import unescape
@@ -16,6 +17,7 @@ INPUT = ROOT / "audit" / "full_corpus" / "verification_sample_1000.csv"
 OUT = ROOT / "audit" / "phase2_stratified_100"
 ENDPOINT = "https://bedesten.adalet.gov.tr/emsal-karar/getDocumentContent"
 CADENCE_SECONDS = 3.6
+csv.field_size_limit(min(sys.maxsize, 10_000_000))
 
 HEADERS = {
     "Accept": "*/*",
