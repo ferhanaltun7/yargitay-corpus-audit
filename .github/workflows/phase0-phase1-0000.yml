@@ -27,54 +27,105 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Discover and download shard via Dataset Server
+      - name: Try public mirrors and verify original shard hash
         shell: bash
         run: |
           python - <<'PY'
+          import hashlib
           import json
+          import sys
           from pathlib import Path
+          from urllib.error import HTTPError, URLError
           from urllib.parse import urlencode
           from urllib.request import Request, urlopen
 
-          dataset = "hamzabagirsakci/turkish-court-decisions"
-          api = "https://datasets-server.huggingface.co/parquet?" + urlencode({"dataset": dataset})
-          req = Request(api, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
-          with urlopen(req, timeout=60) as r:
-              payload = json.load(r)
-
-          files = [
-              x for x in payload["parquet_files"]
-              if x.get("config") == "yargitay"
-              and x.get("split") == "train"
-              and x.get("filename", "").endswith("0000.parquet")
+          expected_sha = "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d"
+          expected_size = 203262814
+          candidates = [
+              "serdarsrts/turkish-court-decisions-duplicate",
+              "mrfg/turkish-court-decisions",
+              "Gyrevortex/turkish-court-decisions",
+              "Alptekinege/turkish-court-decisions",
+              "hamzabagirsakci/turkish-court-decisions",
           ]
-          if len(files) != 1:
-              raise SystemExit(f"Expected exactly one yargitay 0000 shard, got {len(files)}")
-
-          entry = files[0]
-          print("Dataset Server entry:", json.dumps(entry, ensure_ascii=False))
-          url = entry["url"]
 
           out = Path("data/raw/yargitay/train/0000.parquet")
           out.parent.mkdir(parents=True, exist_ok=True)
-          req2 = Request(url, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
-          with urlopen(req2, timeout=120) as r, out.open("wb") as w:
-              while True:
-                  chunk = r.read(8 * 1024 * 1024)
-                  if not chunk:
-                      break
-                  w.write(chunk)
+          attempts = []
 
-          print("Downloaded", out, out.stat().st_size, "bytes")
+          def sha256(path):
+              h = hashlib.sha256()
+              with path.open("rb") as f:
+                  for block in iter(lambda: f.read(8 * 1024 * 1024), b""):
+                      h.update(block)
+              return h.hexdigest()
+
+          for dataset in candidates:
+              rec = {"dataset": dataset}
+              try:
+                  api = "https://datasets-server.huggingface.co/parquet?" + urlencode({"dataset": dataset})
+                  req = Request(api, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+                  with urlopen(req, timeout=60) as r:
+                      payload = json.load(r)
+                  files = [
+                      x for x in payload.get("parquet_files", [])
+                      if x.get("config") == "yargitay"
+                      and x.get("split") == "train"
+                      and x.get("filename", "").endswith("0000.parquet")
+                  ]
+                  rec["parquet_candidates"] = len(files)
+                  if len(files) != 1:
+                      attempts.append(rec)
+                      continue
+
+                  url = files[0]["url"]
+                  rec["url_host"] = url.split("/")[2] if "://" in url else None
+                  req2 = Request(url, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+                  with urlopen(req2, timeout=180) as r, out.open("wb") as w:
+                      while True:
+                          chunk = r.read(8 * 1024 * 1024)
+                          if not chunk:
+                              break
+                          w.write(chunk)
+
+                  rec["size"] = out.stat().st_size
+                  rec["sha256"] = sha256(out)
+                  rec["size_match"] = rec["size"] == expected_size
+                  rec["sha256_match"] = rec["sha256"] == expected_sha
+                  attempts.append(rec)
+
+                  if rec["sha256_match"] and rec["size_match"]:
+                      Path("audit").mkdir(exist_ok=True)
+                      Path("audit/mirror_resolution.json").write_text(
+                          json.dumps({"selected": dataset, "attempts": attempts}, indent=2),
+                          encoding="utf-8",
+                      )
+                      print("Selected mirror:", dataset)
+                      sys.exit(0)
+
+                  out.unlink(missing_ok=True)
+
+              except (HTTPError, URLError, TimeoutError, KeyError, ValueError) as e:
+                  rec["error"] = repr(e)
+                  attempts.append(rec)
+                  out.unlink(missing_ok=True)
+
+          Path("audit").mkdir(exist_ok=True)
+          Path("audit/mirror_resolution.json").write_text(
+              json.dumps({"selected": None, "attempts": attempts}, indent=2),
+              encoding="utf-8",
+          )
+          print(json.dumps(attempts, indent=2))
+          raise SystemExit("No public mirror produced the pinned original shard")
           PY
-          ls -lh data/raw/yargitay/train/0000.parquet
 
-      - name: Run Phase 0-1 audit and verify pinned hash
+      - name: Run Phase 0-1 audit
         run: |
           rm -rf audit/phase0_phase1_0000
           python scripts/audit_one_shard.py \
             --file data/raw/yargitay/train/0000.parquet \
             --out audit/phase0_phase1_0000
+          cp audit/mirror_resolution.json audit/phase0_phase1_0000/mirror_resolution.json
 
       - name: Upload audit artifact
         uses: actions/upload-artifact@v4
