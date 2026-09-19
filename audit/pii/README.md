@@ -1,14 +1,12 @@
-# PII / KVKK Direct-Identifier Screening
+# PII / KVKK Direct-Identifier Screening — V1 INVALID
 
-- Rows scanned: **9,820,145**
-- Rows with dataset-provided masking: **4,350 (0.0443%)**
-- Dataset masked occurrences (sum masked_count): **7,400**
-- Unmasked TR IBAN pattern rows: **0 (0.000000%)**
-- Unmasked email pattern rows: **2 (0.000020%)**
-- Unmasked Turkish mobile pattern rows: **1,254 (0.012770%)**
-- Labeled TCKN-like 11-digit rows: **49 (0.000499%)**
-- Labeled card-number-like rows: **387 (0.003941%)**
+**DO NOT USE THIS V1 RESULT FOR ACCEPTANCE.**
 
-No matched identifier values or text snippets are committed to this public repository.
+The first PII run completed technically, but a regex escaping defect was identified during independent review. The underlying corpus was scanned, but some pattern semantics were not the intended ones.
 
-This is a screening gate, not a complete KVKK determination. A separate NER/manual audit is still required for names, addresses, health data and context-dependent identifiers.
+- Status: **INVALID / SUPERSEDED**
+- Corrected script: `scripts/pii_audit.py`
+- Corrected audit version: `pii_direct_identifier_gate_v2`
+- Acceptance gate: **PENDING V2**
+
+The V1 JSON is retained temporarily for audit provenance. It must not be cited as a validated PII result.
