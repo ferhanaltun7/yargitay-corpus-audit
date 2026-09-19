@@ -1,0 +1,146 @@
+name: Full Yargitay Structural Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/full-corpus-audit.yml"
+      - "scripts/audit_full_corpus.py"
+      - "source_manifest.json"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download and verify all 17 original Yargitay shards
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+
+          manifest = json.loads(Path("source_manifest.json").read_text(encoding="utf-8"))
+          dataset = manifest["verified_mirror"]
+          expected = {Path(x["path"]).name: x for x in manifest["shards"]}
+
+          api = "https://datasets-server.huggingface.co/parquet?" + urlencode({"dataset": dataset})
+          req = Request(api, headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+          with urlopen(req, timeout=60) as r:
+              payload = json.load(r)
+
+          entries = [
+              x for x in payload.get("parquet_files", [])
+              if x.get("config") == "yargitay" and x.get("split") == "train"
+          ]
+          if len(entries) != manifest["expected_shard_count"]:
+              raise SystemExit(f"Expected 17 mirror shard URLs, got {len(entries)}")
+
+          by_name = {Path(x["filename"]).name: x for x in entries}
+          if set(by_name) != set(expected):
+              raise SystemExit(f"Shard name mismatch: mirror={sorted(by_name)}, expected={sorted(expected)}")
+
+          raw_dir = Path("data/raw/yargitay/train")
+          raw_dir.mkdir(parents=True, exist_ok=True)
+
+          def download_one(name):
+              entry = by_name[name]
+              target = raw_dir / name
+              h = hashlib.sha256()
+              size = 0
+              req2 = Request(entry["url"], headers={"User-Agent": "yargitay-corpus-audit/1.0"})
+              with urlopen(req2, timeout=300) as r, target.open("wb") as w:
+                  while True:
+                      block = r.read(8 * 1024 * 1024)
+                      if not block:
+                          break
+                      w.write(block)
+                      h.update(block)
+                      size += len(block)
+              actual_hash = h.hexdigest()
+              exp = expected[name]
+              rec = {
+                  "file": name,
+                  "size_bytes": size,
+                  "expected_size_bytes": exp["size_bytes"],
+                  "size_match": size == exp["size_bytes"],
+                  "sha256": actual_hash,
+                  "expected_sha256": exp["lfs_sha256"],
+                  "sha256_match": actual_hash == exp["lfs_sha256"],
+              }
+              if not rec["size_match"] or not rec["sha256_match"]:
+                  raise RuntimeError(json.dumps(rec))
+              return rec
+
+          records = []
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              futures = {pool.submit(download_one, name): name for name in sorted(expected)}
+              for fut in as_completed(futures):
+                  rec = fut.result()
+                  records.append(rec)
+                  print("VERIFIED", rec["file"], rec["size_bytes"], rec["sha256"])
+
+          records.sort(key=lambda x: x["file"])
+          total_bytes = sum(x["size_bytes"] for x in records)
+          if total_bytes != manifest["expected_total_parquet_bytes"]:
+              raise SystemExit(
+                  f"Total parquet bytes mismatch: {total_bytes} != {manifest['expected_total_parquet_bytes']}"
+              )
+
+          out = Path("audit/full_corpus")
+          out.mkdir(parents=True, exist_ok=True)
+          (out / "source_verification.json").write_text(
+              json.dumps({
+                  "mirror": dataset,
+                  "original_revision": manifest["revision"],
+                  "all_17_sha256_match": all(x["sha256_match"] for x in records),
+                  "all_17_size_match": all(x["size_match"] for x in records),
+                  "total_bytes": total_bytes,
+                  "files": records,
+              }, indent=2),
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Run full corpus audit
+        run: python scripts/audit_full_corpus.py
+
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-yargitay-structural-audit
+          path: audit/full_corpus/
+          if-no-files-found: error
+
+      - name: Commit audit results
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/full_corpus
+          if git diff --cached --quiet; then
+            echo "No audit changes to commit."
+          else
+            git commit -m "Add full Yargitay structural audit results [skip ci]"
+            git push
+          fi
