@@ -1,0 +1,88 @@
+name: Cross Source Reconciliation V2
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cross-source-reconcile-v2.yml"
+      - "scripts/cross_source_reconcile_v2.py"
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Download candidate and external parquet
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,time
+          from concurrent.futures import ThreadPoolExecutor,as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request,urlopen
+          UA={"User-Agent":"yargitay-corpus-audit/1.0"}
+          m=json.loads(Path("source_manifest.json").read_text())
+          exp={Path(x["path"]).name:x for x in m["shards"]}
+          def entries(ds,config=None):
+              u="https://datasets-server.huggingface.co/parquet?"+urlencode({"dataset":ds})
+              with urlopen(Request(u,headers=UA),timeout=60) as r:p=json.load(r)
+              xs=[x for x in p.get("parquet_files",[]) if x.get("split")=="train"]
+              if config:xs=[x for x in xs if x.get("config")==config]
+              return xs
+          def dl(url,target,hash_it=False):
+              last=None
+              for a in range(6):
+                  try:
+                      h=hashlib.sha256();size=0;tmp=target.with_suffix(target.suffix+".part")
+                      with urlopen(Request(url,headers=UA),timeout=300) as r,tmp.open("wb") as w:
+                          while True:
+                              b=r.read(8*1024*1024)
+                              if not b:break
+                              w.write(b);size+=len(b)
+                              if hash_it:h.update(b)
+                      tmp.replace(target);return size,h.hexdigest() if hash_it else None
+                  except Exception as e:
+                      last=e
+                      for p in [target,target.with_suffix(target.suffix+".part")]:
+                          try:p.unlink()
+                          except FileNotFoundError:pass
+                      time.sleep(min(2**a,20))
+              raise last
+          ce=entries(m["verified_mirror"],"yargitay");cb={Path(x["filename"]).name:x for x in ce}
+          cdir=Path("data/raw/yargitay/train");cdir.mkdir(parents=True,exist_ok=True)
+          def dc(n):
+              size,sha=dl(cb[n]["url"],cdir/n,True);e=exp[n]
+              if size!=e["size_bytes"] or sha!=e["lfs_sha256"]:raise RuntimeError(n)
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              for f in as_completed([pool.submit(dc,n) for n in sorted(exp)]):f.result()
+          ee=entries("muhammedturan/turk-ictihat-kararlari-fulltext")
+          edir=Path("data/raw/external_muhammedturan");edir.mkdir(parents=True,exist_ok=True)
+          with ThreadPoolExecutor(max_workers=3) as pool:
+              fs=[pool.submit(dl,e["url"],edir/f"{i:04d}.parquet",False) for i,e in enumerate(ee)]
+              for f in as_completed(fs):f.result()
+          PY
+      - name: Run reconciliation V2
+        run: python scripts/cross_source_reconcile_v2.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-source-reconcile-v2
+          path: audit/cross_source_reconcile_v2/
+      - name: Commit aggregate results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/cross_source_reconcile_v2
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add cross-source reconciliation V2 results [skip ci]"
+          git pull --rebase origin main
+          git push
