@@ -6,7 +6,10 @@
 - Row groups: **12**
 - Columns: **13**
 - Empty text rows: **0**
-- Median text chars: **956**
+- Text <100 chars: **44**
+- Text <300 chars: **1,050**
+- Text <500 chars: **40,709**
+- Median text chars: **955**
 - Min / max text chars: **62 / 793,314**
 - id duplicate excess: **0**
 - document_id duplicate excess: **0**

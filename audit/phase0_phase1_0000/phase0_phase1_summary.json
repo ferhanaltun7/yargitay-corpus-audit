@@ -107,12 +107,21 @@
   },
   "text_stats": {
     "empty_text": 0.0,
+    "lt_100_chars": 44.0,
+    "lt_300_chars": 1050.0,
+    "lt_500_chars": 40709.0,
     "min_chars": 62.0,
-    "p01_chars": 393.0,
-    "median_chars": 956.0,
+    "p01_chars": 392.0,
+    "median_chars": 955.0,
     "p99_chars": 9275.0,
     "max_chars": 793314.0,
     "avg_chars": 1558.3454955719944
+  },
+  "decision_marker_stats": {
+    "has_yargitay": 313283,
+    "has_karar": 800336,
+    "has_esas": 150703,
+    "has_terminal_marker": 519891
   },
   "id_uniqueness": {
     "nonnull": 800812,
