@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/pii-audit.yml"
+      - "scripts/pii_audit.py"
 
 permissions:
   contents: write
