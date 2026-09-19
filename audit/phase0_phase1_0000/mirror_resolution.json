@@ -1,0 +1,14 @@
+{
+  "selected": "serdarsrts/turkish-court-decisions-duplicate",
+  "attempts": [
+    {
+      "dataset": "serdarsrts/turkish-court-decisions-duplicate",
+      "parquet_candidates": 1,
+      "url_host": "huggingface.co",
+      "size": 203262814,
+      "sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+      "size_match": true,
+      "sha256_match": true
+    }
+  ]
+}

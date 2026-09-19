@@ -1,0 +1,137 @@
+{
+  "file": "0000.parquet",
+  "expected_size_bytes": 203262814,
+  "actual_size_bytes": 203262814,
+  "size_match": true,
+  "expected_sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+  "actual_sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+  "sha256_match": true,
+  "parquet_rows": 800812,
+  "row_groups": 12,
+  "columns": [
+    "id",
+    "source",
+    "document_id",
+    "court",
+    "esas_no",
+    "karar_no",
+    "karar_tarihi",
+    "year",
+    "month",
+    "text",
+    "text_len",
+    "masked_count",
+    "raw_sha256"
+  ],
+  "schema": [
+    {
+      "name": "id",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "document_id",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "court",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "esas_no",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "karar_no",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "karar_tarihi",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "year",
+      "type": "int16",
+      "nullable": true
+    },
+    {
+      "name": "month",
+      "type": "int8",
+      "nullable": true
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "nullable": true
+    },
+    {
+      "name": "text_len",
+      "type": "int32",
+      "nullable": true
+    },
+    {
+      "name": "masked_count",
+      "type": "int16",
+      "nullable": true
+    },
+    {
+      "name": "raw_sha256",
+      "type": "string",
+      "nullable": true
+    }
+  ],
+  "null_counts": {
+    "id": 0,
+    "source": 0,
+    "document_id": 0,
+    "court": 0,
+    "esas_no": 0,
+    "karar_no": 0,
+    "karar_tarihi": 0,
+    "year": 0,
+    "month": 0,
+    "text": 0,
+    "text_len": 0,
+    "masked_count": 0,
+    "raw_sha256": 0
+  },
+  "text_stats": {
+    "empty_text": 0.0,
+    "min_chars": 62.0,
+    "p01_chars": 393.0,
+    "median_chars": 956.0,
+    "p99_chars": 9275.0,
+    "max_chars": 793314.0,
+    "avg_chars": 1558.3454955719944
+  },
+  "id_uniqueness": {
+    "nonnull": 800812,
+    "distinct": 800812,
+    "duplicate_excess": 0
+  },
+  "document_id_uniqueness": {
+    "nonnull": 800812,
+    "distinct": 800812,
+    "duplicate_excess": 0
+  },
+  "raw_sha256_uniqueness": {
+    "nonnull": 800812,
+    "distinct": 800812,
+    "duplicate_excess": 0
+  },
+  "metadata_duplicate_excess": 0,
+  "year_min_max": [
+    1997,
+    2010
+  ]
+}
