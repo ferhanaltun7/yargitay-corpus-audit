@@ -106,11 +106,11 @@ def main():
     quality = con.execute(
         f"""
         SELECT
-          count(*) FILTER (WHERE lower(text) LIKE '%ilgilecezamahadi%') AS placeholder_ilgili_ceza_mah,
+          count(*) FILTER (WHERE lower(text) LIKE '%ilgilicezamahadi%') AS placeholder_ilgili_ceza_mah,
           count(*) FILTER (WHERE lower(text) LIKE '%davaturu%') AS placeholder_dava_turu,
           count(*) FILTER (WHERE lower(text) LIKE '%deneme karar metni%') AS placeholder_deneme,
           count(*) FILTER (
-            WHERE lower(text) LIKE '%ilgilecezamahadi%'
+            WHERE lower(text) LIKE '%ilgilicezamahadi%'
                OR lower(text) LIKE '%davaturu%'
                OR lower(text) LIKE '%deneme karar metni%'
           ) AS any_known_placeholder,
@@ -134,7 +134,7 @@ def main():
           SELECT year, count(*) AS decisions,
                  count(*) FILTER (WHERE length(text) < 300) AS lt_300,
                  count(*) FILTER (
-                   WHERE lower(text) LIKE '%ilgilecezamahadi%'
+                   WHERE lower(text) LIKE '%ilgilicezamahadi%'
                       OR lower(text) LIKE '%davaturu%'
                       OR lower(text) LIKE '%deneme karar metni%'
                  ) AS known_placeholder
@@ -180,14 +180,14 @@ def main():
                  year, length(text) AS chars, text
           FROM {src}
           WHERE length(text) < 300
-             OR lower(text) LIKE '%ilgilecezamahadi%'
+             OR lower(text) LIKE '%ilgilicezamahadi%'
              OR lower(text) LIKE '%davaturu%'
              OR lower(text) LIKE '%deneme karar metni%'
              OR court = '-'
           ORDER BY
             CASE
               WHEN lower(text) LIKE '%deneme karar metni%' THEN 0
-              WHEN lower(text) LIKE '%ilgilecezamahadi%' THEN 1
+              WHEN lower(text) LIKE '%ilgilicezamahadi%' THEN 1
               WHEN lower(text) LIKE '%davaturu%' THEN 2
               WHEN length(text) < 100 THEN 3
               ELSE 4
@@ -196,6 +196,63 @@ def main():
             id
           LIMIT 1000
         ) TO '{(out / "suspicious_examples_1000.csv").as_posix()}'
+        (HEADER, DELIMITER ',')
+        """
+    )
+
+
+    # Deterministic 1,000-row official-verification sample:
+    # 770 rows from 2016-2026 (70/year), 190 from 2006-2015 (19/year),
+    # plus 40 from pre-2006. hash(id) provides deterministic within-stratum selection.
+    con.execute(
+        f"""
+        COPY (
+          WITH ranked AS (
+            SELECT *,
+                   row_number() OVER (
+                     PARTITION BY year
+                     ORDER BY hash(id), id
+                   ) AS year_rn
+            FROM {src}
+          ),
+          old_ranked AS (
+            SELECT *,
+                   row_number() OVER (ORDER BY hash(id), id) AS old_rn
+            FROM {src}
+            WHERE year < 2006
+          ),
+          selected AS (
+            SELECT id, document_id, source, court, esas_no, karar_no, karar_tarihi,
+                   year, month, text_len, masked_count, raw_sha256, text,
+                   'modern_2016_2026' AS stratum
+            FROM ranked
+            WHERE year BETWEEN 2016 AND 2026 AND year_rn <= 70
+
+            UNION ALL
+
+            SELECT id, document_id, source, court, esas_no, karar_no, karar_tarihi,
+                   year, month, text_len, masked_count, raw_sha256, text,
+                   'mid_2006_2015' AS stratum
+            FROM ranked
+            WHERE year BETWEEN 2006 AND 2015 AND year_rn <= 19
+
+            UNION ALL
+
+            SELECT id, document_id, source, court, esas_no, karar_no, karar_tarihi,
+                   year, month, text_len, masked_count, raw_sha256, text,
+                   'old_pre_2006' AS stratum
+            FROM old_ranked
+            WHERE old_rn <= 40
+          )
+          SELECT *,
+                 CASE
+                   WHEN lower(court) LIKE '%ceza%' THEN 'ceza'
+                   WHEN lower(court) LIKE '%hukuk%' THEN 'hukuk'
+                   ELSE 'other'
+                 END AS court_group
+          FROM selected
+          ORDER BY stratum, year, hash(id), id
+        ) TO '{(out / "verification_sample_1000.csv").as_posix()}'
         (HEADER, DELIMITER ',')
         """
     )
