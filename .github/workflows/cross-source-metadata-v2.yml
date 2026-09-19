@@ -1,0 +1,125 @@
+name: Cross Source Yargitay Metadata Audit V2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cross-source-metadata-v2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download candidate and external metadata with retry
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, time
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from pathlib import Path
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+
+          UA={"User-Agent":"yargitay-corpus-audit/1.0"}
+          manifest=json.loads(Path("source_manifest.json").read_text())
+          expected={Path(x["path"]).name:x for x in manifest["shards"]}
+
+          def parquet_entries(dataset, config=None):
+              url="https://datasets-server.huggingface.co/parquet?"+urlencode({"dataset":dataset})
+              with urlopen(Request(url,headers=UA),timeout=60) as r:
+                  p=json.load(r)
+              xs=[x for x in p.get("parquet_files",[]) if x.get("split")=="train"]
+              if config is not None:
+                  xs=[x for x in xs if x.get("config")==config]
+              return xs
+
+          def stream_download(url,target,hash_it=False,retries=6):
+              last=None
+              for attempt in range(retries):
+                  try:
+                      h=hashlib.sha256(); size=0
+                      tmp=target.with_suffix(target.suffix+".part")
+                      if tmp.exists(): tmp.unlink()
+                      with urlopen(Request(url,headers=UA),timeout=300) as r, tmp.open("wb") as w:
+                          while True:
+                              b=r.read(8*1024*1024)
+                              if not b: break
+                              w.write(b); size+=len(b)
+                              if hash_it: h.update(b)
+                      tmp.replace(target)
+                      return size,(h.hexdigest() if hash_it else None)
+                  except Exception as e:
+                      last=e
+                      for p in [target,target.with_suffix(target.suffix+".part")]:
+                          try: p.unlink()
+                          except FileNotFoundError: pass
+                      if attempt+1<retries:
+                          time.sleep(min(2**attempt,20))
+              raise last
+
+          cand_entries=parquet_entries(manifest["verified_mirror"],"yargitay")
+          cand_by={Path(x["filename"]).name:x for x in cand_entries}
+          if set(cand_by)!=set(expected):
+              raise SystemExit("Candidate shard set mismatch")
+          cdir=Path("data/raw/yargitay/train"); cdir.mkdir(parents=True,exist_ok=True)
+
+          def dl_candidate(name):
+              target=cdir/name
+              size,sha=stream_download(cand_by[name]["url"],target,True)
+              exp=expected[name]
+              if size!=exp["size_bytes"] or sha!=exp["lfs_sha256"]:
+                  raise RuntimeError("Candidate verification failed "+name)
+              return name
+
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              for fut in as_completed([pool.submit(dl_candidate,n) for n in sorted(expected)]):
+                  print("CANDIDATE",fut.result())
+
+          external="muhammedturan/turk-ictihat-kararlari-fulltext"
+          ext_entries=parquet_entries(external)
+          if not ext_entries: raise SystemExit("No external parquet entries")
+          edir=Path("data/raw/external_muhammedturan"); edir.mkdir(parents=True,exist_ok=True)
+
+          def dl_ext(i,e):
+              target=edir/f"{i:04d}.parquet"
+              size,_=stream_download(e["url"],target,False)
+              return target.name,size
+
+          with ThreadPoolExecutor(max_workers=3) as pool:
+              fs=[pool.submit(dl_ext,i,e) for i,e in enumerate(ext_entries)]
+              for fut in as_completed(fs):
+                  print("EXTERNAL",*fut.result())
+          print("EXTERNAL_FILES",len(ext_entries))
+          PY
+
+      - name: Run cross-source comparison
+        run: python scripts/cross_source_metadata_audit.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-source-yargitay-metadata-audit-v2
+          path: audit/cross_source_metadata/
+
+      - name: Commit aggregate results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/cross_source_metadata
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add cross-source Yargitay metadata audit results [skip ci]"
+          git pull --rebase origin main
+          git push
