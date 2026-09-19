@@ -1,0 +1,107 @@
+{
+  "audit_version": "cross_source_metadata_v1",
+  "candidate": "hamzabagirsakci/turkish-court-decisions:yargitay",
+  "candidate_revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "external": "muhammedturan/turk-ictihat-kararlari-fulltext",
+  "method": "exact document_id + normalized exact (court, esas_no, karar_no) metadata keys",
+  "summary": {
+    "candidate_rows": 9820145,
+    "external_rows": 9899589,
+    "candidate_distinct_document_id": 9820145,
+    "external_distinct_document_id": 9899589,
+    "candidate_distinct_metadata_key": 9820145,
+    "external_distinct_metadata_key": 9827716,
+    "external_metadata_duplicate_excess": 71873,
+    "candidate_non_numeric_document_id": 0,
+    "exact_document_id_overlap": 9744523,
+    "external_document_ids_not_in_candidate": 155066,
+    "external_missing_docid_but_metadata_key_present": 71999,
+    "external_metadata_keys_absent_from_candidate": 83067,
+    "candidate_document_ids_not_in_external": 75622,
+    "candidate_metadata_keys_absent_from_external": 76966
+  },
+  "by_year_2016_2026": [
+    {
+      "year": 2016,
+      "candidate_rows": 654309,
+      "external_rows": 653458,
+      "external_unique_metadata_keys": 652211,
+      "candidate_minus_external_unique_keys": 2098
+    },
+    {
+      "year": 2017,
+      "candidate_rows": 628788,
+      "external_rows": 629836,
+      "external_unique_metadata_keys": 629000,
+      "candidate_minus_external_unique_keys": -212
+    },
+    {
+      "year": 2018,
+      "candidate_rows": 511482,
+      "external_rows": 512273,
+      "external_unique_metadata_keys": 511451,
+      "candidate_minus_external_unique_keys": 31
+    },
+    {
+      "year": 2019,
+      "candidate_rows": 523722,
+      "external_rows": 524649,
+      "external_unique_metadata_keys": 524084,
+      "candidate_minus_external_unique_keys": -362
+    },
+    {
+      "year": 2020,
+      "candidate_rows": 445968,
+      "external_rows": 447099,
+      "external_unique_metadata_keys": 445369,
+      "candidate_minus_external_unique_keys": 599
+    },
+    {
+      "year": 2021,
+      "candidate_rows": 481139,
+      "external_rows": 490566,
+      "external_unique_metadata_keys": 481643,
+      "candidate_minus_external_unique_keys": -504
+    },
+    {
+      "year": 2022,
+      "candidate_rows": 355551,
+      "external_rows": 369348,
+      "external_unique_metadata_keys": 355419,
+      "candidate_minus_external_unique_keys": 132
+    },
+    {
+      "year": 2023,
+      "candidate_rows": 264489,
+      "external_rows": 266085,
+      "external_unique_metadata_keys": 264067,
+      "candidate_minus_external_unique_keys": 422
+    },
+    {
+      "year": 2024,
+      "candidate_rows": 298654,
+      "external_rows": 300140,
+      "external_unique_metadata_keys": 298864,
+      "candidate_minus_external_unique_keys": -210
+    },
+    {
+      "year": 2025,
+      "candidate_rows": 313478,
+      "external_rows": 317670,
+      "external_unique_metadata_keys": 316977,
+      "candidate_minus_external_unique_keys": -3499
+    },
+    {
+      "year": 2026,
+      "candidate_rows": 36496,
+      "external_rows": 108090,
+      "external_unique_metadata_keys": 107935,
+      "candidate_minus_external_unique_keys": -71439
+    }
+  ],
+  "limitations": [
+    "External dataset is document-id oriented and may retain multiple IDs for the same legal decision.",
+    "Exact court-name normalization is trim+lower only; aliases/renames are not fuzzy-matched.",
+    "A metadata-key mismatch is a candidate for investigation, not automatically a missing legal decision."
+  ]
+}
