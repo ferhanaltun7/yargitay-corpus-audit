@@ -1,0 +1,81 @@
+{
+  "audit_version": "cross_source_reconcile_v2",
+  "method": "exact residual -> numeric (esas_year,esas_seq,karar_year,karar_seq) -> court canonical/fuzzy reconciliation",
+  "summary": {
+    "external_residual_exact_key": 84717,
+    "residual_numeric_key_parseable": 82978,
+    "residual_rows_with_any_same_numeric_decision_key": 36,
+    "residual_rows_with_court_canon_exact": 0,
+    "residual_rows_with_court_similarity_ge_095": 13,
+    "residual_rows_with_court_similarity_ge_090": 14,
+    "residual_rows_same_numeric_key_and_exact_date": 0,
+    "external_residual_after_numeric_fuzzy_court": 84703
+  },
+  "top_court_alias_pairs": [
+    {
+      "external_court": "14. Hukuk Dairesi",
+      "candidate_court": "12. Hukuk Dairesi",
+      "rows": 4,
+      "similarity": 0.9625
+    },
+    {
+      "external_court": "10. Hukuk Dairesi",
+      "candidate_court": "12. Hukuk Dairesi",
+      "rows": 2,
+      "similarity": 0.9625
+    },
+    {
+      "external_court": "11. Hukuk Dairesi",
+      "candidate_court": "12. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9625
+    },
+    {
+      "external_court": "12. Hukuk Dairesi",
+      "candidate_court": "16. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9625
+    },
+    {
+      "external_court": "21. Hukuk Dairesi",
+      "candidate_court": "22. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9625
+    },
+    {
+      "external_court": "9. Hukuk Dairesi",
+      "candidate_court": "1. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9556
+    },
+    {
+      "external_court": "6. Hukuk Dairesi",
+      "candidate_court": "1. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9556
+    },
+    {
+      "external_court": "5. Hukuk Dairesi",
+      "candidate_court": "6. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9556
+    },
+    {
+      "external_court": "6. Ceza Dairesi",
+      "candidate_court": "8. Ceza Dairesi",
+      "rows": 1,
+      "similarity": 0.9524
+    },
+    {
+      "external_court": "8. Hukuk Dairesi",
+      "candidate_court": "12. Hukuk Dairesi",
+      "rows": 1,
+      "similarity": 0.9361
+    }
+  ],
+  "limitations": [
+    "Fuzzy reconciliation is metadata-only and does not prove text identity.",
+    "Same numeric decision key can theoretically collide across courts; court similarity/date are used as safeguards.",
+    "Residual rows remain investigation candidates, not automatically proven missing decisions."
+  ]
+}
