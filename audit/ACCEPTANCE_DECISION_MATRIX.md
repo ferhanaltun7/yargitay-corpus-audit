@@ -17,11 +17,11 @@ The final corpus decision is one of:
 | Text structural quality | same | empty text = 0; severe-short-text rate controlled | PASS |
 | 2016–2025 continuity | `audit/COVERAGE_ASSESSMENT.md` | no unexplained one-year internal gaps | PASS |
 | Official anomaly check | `audit/phase2_official_probe/` | suspicious rows trace back to official source | PASS (12/12 probe) |
-| Stratified official validation | `audit/phase2_stratified_100/` | >=95 retrieved; metadata >=99%; text differences explainable | PENDING |
-| Official searchable census | `audit/bedesten_year_totals/` | corpus/official differences quantified and explainable | PENDING |
-| Direct identifier screening | `audit/pii/` | unmasked direct identifiers quantified; mitigation defined | PENDING |
+| Stratified official validation | `audit/phase2_stratified_100/` | >=95 retrieved; metadata >=99%; text differences explainable | RUNNING |
+| Modern searchable-inventory proxy | `audit/bedesten_modern_year_proxy/` | differences quantified; duplicate/snapshot effects separated | CONDITIONAL — 2016–2025 ratio 99.2278%; 2026 frozen snapshot incomplete |
+| Direct identifier screening | `audit/pii/` | unmasked direct identifiers quantified; mitigation defined | CONDITIONAL PASS — independent sanitization required |
 | Contextual PII/NER | future audit | names/addresses/health/contextual identifiers assessed | PENDING |
-| Cross-corpus overlap | future audit | prior corpus A vs candidate B overlap/delta explained | PENDING |
+| Independent metadata cross-source audit | `audit/cross_source_metadata/` | document-ID vs decision-key differences explained | RUNNING |
 
 ## Decision rules
 
@@ -56,3 +56,9 @@ An **ACCEPT** decision means acceptable as the project's canonical raw Yargıtay
 - every Yargıtay decision ever issued is publicly searchable,
 - every historical year is census-complete,
 - raw text is automatically safe for public redistribution or production indexing without PII controls.
+
+## Current provisional disposition
+
+**ACCEPT_WITH_CONDITIONS (provisional)**
+
+The candidate is structurally strong and source-integrity checks pass. Remaining decision-changing gates are the 100-decision official-source validation and independent cross-source decision-key reconciliation. Production use also requires direct-identifier sanitization and an incremental update layer beyond the frozen 2026 snapshot.
