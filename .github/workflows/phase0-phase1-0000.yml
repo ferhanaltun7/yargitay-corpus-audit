@@ -1,0 +1,64 @@
+name: Phase 0-1 Audit - Yargitay shard 0000
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase0-phase1-0000.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download pinned 203 MB shard
+        shell: bash
+        run: |
+          mkdir -p data/raw/yargitay/train
+          curl -L --fail --retry 5 --retry-delay 3 \
+            "https://huggingface.co/datasets/hamzabagirsakci/turkish-court-decisions/resolve/4df66ee63c4adbcae8434787718c7b42381a69dd/yargitay/train/0000.parquet?download=true" \
+            -o data/raw/yargitay/train/0000.parquet
+          ls -lh data/raw/yargitay/train/0000.parquet
+
+      - name: Run Phase 0-1 audit
+        run: |
+          rm -rf audit/phase0_phase1_0000
+          python scripts/audit_one_shard.py \
+            --file data/raw/yargitay/train/0000.parquet \
+            --out audit/phase0_phase1_0000
+
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-phase1-0000
+          path: audit/phase0_phase1_0000/
+          if-no-files-found: error
+
+      - name: Commit audit results
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/phase0_phase1_0000
+          if git diff --cached --quiet; then
+            echo "No audit changes to commit."
+          else
+            git commit -m "Add Phase 0-1 audit results for shard 0000 [skip ci]"
+            git push
+          fi
