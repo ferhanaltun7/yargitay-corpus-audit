@@ -1,0 +1,113 @@
+{
+  "method": "Bedesten generic-term year-total proxy; not asserted as exhaustive census",
+  "phrase": "karar",
+  "years": "2016-2026",
+  "years_retrieved": 11,
+  "complete_years_2016_2025": {
+    "corpus_rows": 4477580,
+    "bedesten_query_total": 4512424,
+    "difference": 34844,
+    "ratio": 0.9922782078989031
+  },
+  "results": [
+    {
+      "year": 2016,
+      "corpus_rows": 654309,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 654396,
+      "difference_bedesten_minus_corpus": 87,
+      "corpus_over_bedesten_ratio": 0.9998670529770964
+    },
+    {
+      "year": 2017,
+      "corpus_rows": 628788,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 629836,
+      "difference_bedesten_minus_corpus": 1048,
+      "corpus_over_bedesten_ratio": 0.9983360747877226
+    },
+    {
+      "year": 2018,
+      "corpus_rows": 511482,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 512273,
+      "difference_bedesten_minus_corpus": 791,
+      "corpus_over_bedesten_ratio": 0.9984559014431758
+    },
+    {
+      "year": 2019,
+      "corpus_rows": 523722,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 524649,
+      "difference_bedesten_minus_corpus": 927,
+      "corpus_over_bedesten_ratio": 0.9982331044183825
+    },
+    {
+      "year": 2020,
+      "corpus_rows": 445968,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 447399,
+      "difference_bedesten_minus_corpus": 1431,
+      "corpus_over_bedesten_ratio": 0.9968015127436584
+    },
+    {
+      "year": 2021,
+      "corpus_rows": 481139,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 490566,
+      "difference_bedesten_minus_corpus": 9427,
+      "corpus_over_bedesten_ratio": 0.9807834215987248
+    },
+    {
+      "year": 2022,
+      "corpus_rows": 355551,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 369348,
+      "difference_bedesten_minus_corpus": 13797,
+      "corpus_over_bedesten_ratio": 0.9626449852171935
+    },
+    {
+      "year": 2023,
+      "corpus_rows": 264489,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 266085,
+      "difference_bedesten_minus_corpus": 1596,
+      "corpus_over_bedesten_ratio": 0.9940019166807599
+    },
+    {
+      "year": 2024,
+      "corpus_rows": 298654,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 300140,
+      "difference_bedesten_minus_corpus": 1486,
+      "corpus_over_bedesten_ratio": 0.9950489771439994
+    },
+    {
+      "year": 2025,
+      "corpus_rows": 313478,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 317732,
+      "difference_bedesten_minus_corpus": 4254,
+      "corpus_over_bedesten_ratio": 0.9866113579998238
+    },
+    {
+      "year": 2026,
+      "corpus_rows": 36496,
+      "phrase": "karar",
+      "status": "ok",
+      "bedesten_query_total": 121082,
+      "difference_bedesten_minus_corpus": 84586,
+      "corpus_over_bedesten_ratio": 0.3014155696139806
+    }
+  ]
+}
