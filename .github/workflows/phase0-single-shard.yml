@@ -1,0 +1,157 @@
+name: Phase 0-1 Single Shard Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/phase0-single-shard.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install audit dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyarrow duckdb
+
+      - name: Download pinned shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/raw/yargitay/train audit
+          URL="https://huggingface.co/datasets/hamzabagirsakci/turkish-court-decisions/resolve/4df66ee63c4adbcae8434787718c7b42381a69dd/yargitay/train/0000.parquet?download=true"
+          curl -L --fail --retry 4 --retry-delay 5 "$URL" -o data/raw/yargitay/train/0000.parquet
+          test "$(stat -c%s data/raw/yargitay/train/0000.parquet)" = "203262814"
+          echo "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d  data/raw/yargitay/train/0000.parquet" | sha256sum -c -
+
+      - name: Run schema-aware Phase 0-1 audit
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, hashlib
+          from pathlib import Path
+          import pyarrow.parquet as pq
+          import pyarrow.compute as pc
+          import pyarrow as pa
+
+          p = Path("data/raw/yargitay/train/0000.parquet")
+          pf = pq.ParquetFile(p)
+          schema = pf.schema_arrow
+          cols = schema.names
+          meta = pf.metadata
+
+          def fsize_sha(path):
+              h=hashlib.sha256()
+              with open(path,"rb") as f:
+                  for b in iter(lambda:f.read(8*1024*1024), b""):
+                      h.update(b)
+              return path.stat().st_size, h.hexdigest()
+
+          size, sha = fsize_sha(p)
+          result = {
+              "audit_version": "phase0_1_single_shard_v1",
+              "file": str(p),
+              "size_bytes": size,
+              "sha256": sha,
+              "size_expected": 203262814,
+              "sha256_expected": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+              "size_match": size == 203262814,
+              "sha256_match": sha == "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+              "num_rows": meta.num_rows,
+              "num_row_groups": meta.num_row_groups,
+              "num_columns": meta.num_columns,
+              "columns": cols,
+              "schema": str(schema),
+          }
+
+          wanted = [c for c in ["id","document_id","source","court","esas_no","karar_no","karar_tarihi","year","text","text_len","raw_sha256"] if c in cols]
+          table = pq.read_table(p, columns=wanted)
+
+          def nulls(col):
+              return table[col].null_count
+
+          result["null_counts"] = {c: nulls(c) for c in wanted}
+
+          # Empty/whitespace counts for string columns.
+          empty = {}
+          for c in wanted:
+              arr = table[c]
+              if pa.types.is_string(arr.type) or pa.types.is_large_string(arr.type):
+                  stripped = pc.utf8_trim_whitespace(arr)
+                  empty[c] = int(pc.sum(pc.equal(pc.fill_null(stripped, ""), "")).as_py())
+          result["empty_or_null_string_counts"] = empty
+
+          if "text" in wanted:
+              lengths = pc.utf8_length(table["text"])
+              clean = pc.drop_null(lengths)
+              result["text_length"] = {
+                  "min": int(pc.min(clean).as_py()) if len(clean) else None,
+                  "max": int(pc.max(clean).as_py()) if len(clean) else None,
+                  "mean": float(pc.mean(clean).as_py()) if len(clean) else None,
+              }
+              # thresholds useful for suspiciously short documents
+              result["text_short_counts"] = {
+                  "lt_100": int(pc.sum(pc.less(pc.fill_null(lengths, 0), 100)).as_py()),
+                  "lt_300": int(pc.sum(pc.less(pc.fill_null(lengths, 0), 300)).as_py()),
+                  "lt_500": int(pc.sum(pc.less(pc.fill_null(lengths, 0), 500)).as_py()),
+                  "lt_1000": int(pc.sum(pc.less(pc.fill_null(lengths, 0), 1000)).as_py()),
+              }
+
+          # Exact duplicate counts where feasible.
+          import duckdb
+          con=duckdb.connect()
+          qbase="read_parquet('data/raw/yargitay/train/0000.parquet')"
+          dup={}
+          if "id" in cols:
+              dup["id_excess"] = con.execute(f"select count(*)-count(distinct id) from {qbase}").fetchone()[0]
+          if "raw_sha256" in cols:
+              dup["raw_sha256_excess_nonnull"] = con.execute(f"select count(*)-count(distinct raw_sha256) from {qbase} where raw_sha256 is not null").fetchone()[0]
+          keys=[c for c in ["source","court","esas_no","karar_no"] if c in cols]
+          if len(keys)>=3:
+              ks=", ".join(keys)
+              dup["metadata_excess"] = con.execute(f"select coalesce(sum(n-1),0) from (select {ks}, count(*) n from {qbase} group by {ks} having count(*)>1)").fetchone()[0]
+          result["duplicate_metrics"] = dup
+
+          if "year" in cols:
+              result["year_min_max"] = con.execute(f"select min(year), max(year) from {qbase}").fetchone()
+              rows=con.execute(f"select year, count(*) n from {qbase} group by year order by year").fetchall()
+              result["rows_by_year"] = [{"year":r[0],"rows":r[1]} for r in rows]
+
+          if "source" in cols:
+              rows=con.execute(f"select source, count(*) n from {qbase} group by source order by n desc").fetchall()
+              result["rows_by_source"]=[{"source":r[0],"rows":r[1]} for r in rows]
+
+          Path("audit/phase0_1_single_shard.json").write_text(json.dumps(result, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+          print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+          PY
+
+      - name: Commit audit result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "yargitay-audit-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add audit/phase0_1_single_shard.json
+          if git diff --cached --quiet; then
+            echo "No audit changes to commit."
+          else
+            git commit -m "Record Phase 0-1 single shard audit"
+            git push
+          fi
+
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-1-single-shard-audit
+          path: audit/phase0_1_single_shard.json
