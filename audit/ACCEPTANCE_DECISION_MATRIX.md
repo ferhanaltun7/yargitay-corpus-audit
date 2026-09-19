@@ -1,6 +1,6 @@
 # Acceptance Decision Matrix v1
 
-The final corpus decision is one of:
+Final corpus decision states:
 
 - **ACCEPT**
 - **ACCEPT_WITH_CONDITIONS**
@@ -8,57 +8,54 @@ The final corpus decision is one of:
 
 ## Evidence gates
 
-| Gate | Evidence | PASS criterion | Current state |
-|---|---|---|---|
-| Source integrity | `audit/full_corpus/source_verification.json` | 17/17 size + SHA-256 match | PASS |
-| Row/schema integrity | `audit/full_corpus/full_corpus_summary.json` | 9,820,145 rows; identical shard schema | PASS |
-| Required fields | same | no empty core metadata/text fields | PASS |
-| Exact duplication | same | zero excess ID/document/hash/metadata duplicates | PASS |
-| Text structural quality | same | empty text = 0; severe-short-text rate controlled | PASS |
-| 2016–2025 continuity | `audit/COVERAGE_ASSESSMENT.md` | no unexplained one-year internal gaps | PASS |
-| Official anomaly check | `audit/phase2_official_probe/` | suspicious rows trace back to official source | PASS (12/12 probe) |
-| Stratified official validation | `audit/phase2_stratified_100/` | >=95 retrieved; metadata >=99%; text differences explainable | RUNNING |
-| Modern searchable-inventory proxy | `audit/bedesten_modern_year_proxy/` | differences quantified; duplicate/snapshot effects separated | CONDITIONAL — 2016–2025 ratio 99.2278%; 2026 frozen snapshot incomplete |
-| Direct identifier screening | `audit/pii/` | unmasked direct identifiers quantified; mitigation defined | CONDITIONAL PASS — independent sanitization required |
-| Contextual PII/NER | future audit | names/addresses/health/contextual identifiers assessed | PENDING |
-| Independent metadata cross-source audit | `audit/cross_source_metadata/` | document-ID vs decision-key differences explained | RUNNING |
+| Gate | Evidence | Current state |
+|---|---|---|
+| Source integrity | `audit/full_corpus/source_verification.json` | **PASS** — 17/17 size + SHA-256 match |
+| Row/schema integrity | `audit/full_corpus/full_corpus_summary.json` | **PASS** — 9,820,145 rows; identical schema |
+| Required fields | same | **PASS** — no empty core metadata/text fields |
+| Exact duplication | same | **PASS** — zero excess ID/document/hash/metadata duplicates |
+| Text structural quality | same | **PASS** — empty text = 0; severe-short-text rate low |
+| 2016–2025 continuity | `audit/MODERN_COVERAGE_PROXY_ASSESSMENT.md` | **PASS** |
+| Official anomaly check | `audit/phase2_official_probe/` | **PASS** — 12/12 official retrieval |
+| Stratified official validation | `audit/phase2_stratified_100/` | **PASS** — 98/100 retrieved; 98/98 text similarity >=0.95; median 0.999731 |
+| Modern searchable-inventory proxy | coverage assessment | **CONDITIONAL PASS** — 2016–2025 ratio 99.2278%; 2026 snapshot incomplete |
+| Independent metadata cross-source audit | `audit/cross_source_metadata/` | **CONDITIONAL PASS** — 9,744,523 exact document-ID overlap; residual decision-key differences bounded but non-zero |
+| Direct identifier screening/sanitization | `audit/pii_sanitization/` | **RUNNING / REQUIRED BEFORE INDEXING** |
+| Contextual PII/NER | future audit | **PENDING** |
+| 2026 incremental freshness | update layer | **REQUIRED** |
 
-## Decision rules
+## Current decision
 
-### ACCEPT
+# **ACCEPT_WITH_CONDITIONS**
 
-Requires:
-1. All hard structural gates PASS.
-2. Stratified official-source validation PASS.
-3. No unexplained material coverage deficit in the project's 2016–2026 window.
-4. PII risks have a reproducible sanitization policy before production indexing.
-5. Provenance remains pinned to immutable hashes/revision.
+The candidate corpus is accepted as the project's canonical raw Yargıtay source **subject to the conditions below**.
 
-### ACCEPT_WITH_CONDITIONS
+### Conditions
 
-Use when the core corpus is authentic and structurally sound but one or more bounded issues remain, such as:
-- historical pre-2006 coverage is sparse,
-- a defined subset requires exclusion/remediation,
-- PII sanitization must run before indexing,
-- completeness is strong for 2016–2026 but not defensible for the entire historical range.
+1. **Do not treat the frozen 2026 snapshot as current.**
+   The published corpus ends at the frozen source snapshot and requires an incremental update layer.
 
-### REJECT
+2. **Run direct-identifier sanitization before production indexing.**
+   Raw data remains immutable; sanitized derivatives must be reproducible.
 
-Use if any material hard failure is found:
-- source hashes/provenance cannot be reproduced,
-- systematic metadata/text mismatches against official sources,
-- unexplained large coverage holes in the target window,
-- material corruption/duplication/truncation that cannot be isolated.
+3. **Complete contextual PII/NER policy before any public-facing or broadly redistributed index.**
+   Names, addresses, health/minor/victim/suspect identifiers are outside the direct-regex layer.
 
-## Important scope distinction
+4. **Preserve cross-source reconciliation evidence.**
+   The independent metadata corpus contains 83,067 metadata keys absent from the candidate under exact normalized matching; these are investigation candidates, not automatically proven missing legal decisions.
 
-An **ACCEPT** decision means acceptable as the project's canonical raw Yargıtay corpus under the audited scope. It does **not** mean:
-- every Yargıtay decision ever issued is publicly searchable,
-- every historical year is census-complete,
-- raw text is automatically safe for public redistribution or production indexing without PII controls.
+5. **Keep provenance immutable.**
+   Production derivatives must retain source revision, shard hash, document ID, metadata key and transformation lineage.
 
-## Current provisional disposition
+## Why this is not REJECT
 
-**ACCEPT_WITH_CONDITIONS (provisional)**
+No evidence of systematic corruption, fabricated text, duplicate inflation, schema inconsistency, empty-document inflation, or material text mismatch was found. Official-source validation is extremely strong.
 
-The candidate is structurally strong and source-integrity checks pass. Remaining decision-changing gates are the 100-decision official-source validation and independent cross-source decision-key reconciliation. Production use also requires direct-identifier sanitization and an incremental update layer beyond the frozen 2026 snapshot.
+## Why this is not unconditional ACCEPT
+
+The remaining issues concern:
+- 2026 freshness,
+- bounded cross-source completeness uncertainty,
+- contextual PII governance.
+
+These are operational/data-governance conditions rather than evidence that the corpus itself is unreliable.
