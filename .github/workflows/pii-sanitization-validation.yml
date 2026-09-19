@@ -1,11 +1,11 @@
-name: Direct Identifier Sanitization Validation
+name: Direct Identifier Sanitization Validation\n# rerun-v2: 2026-09-19
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/pii-sanitization-validation.yml"
+      - ".github/workflows/pii-sanitization-validation.yml"\n      - "scripts/pii_sanitization_validation.py"
 
 permissions:
   contents: write
