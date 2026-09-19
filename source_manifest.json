@@ -1,0 +1,21 @@
+{
+  "dataset_id": "hamzabagirsakci/turkish-court-decisions",
+  "dataset_type": "huggingface_dataset",
+  "source": "yargitay",
+  "revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "expected_rows": 9820145,
+  "expected_year_min": 1997,
+  "expected_year_max": 2026,
+  "expected_shard_count": 17,
+  "license_label": "cc0-1.0",
+  "pinned_example_shard": {
+    "path": "yargitay/train/0000.parquet",
+    "size_bytes": 203262814,
+    "lfs_sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d"
+  },
+  "acceptance_states": [
+    "ACCEPT",
+    "ACCEPT_WITH_CONDITIONS",
+    "REJECT"
+  ]
+}
