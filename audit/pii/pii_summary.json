@@ -1,0 +1,323 @@
+{
+  "audit_version": "pii_direct_identifier_gate_v1",
+  "source_revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "scope": "aggregate counts only; no matched PII values or snippets persisted",
+  "caveat": "Regex flags are screening signals, not a legal conclusion. Names, addresses, health data and contextual identifiers require a separate NER/manual audit.",
+  "totals": {
+    "rows": 9820145.0,
+    "rows_with_dataset_masking": 4350.0,
+    "total_dataset_masked_count": 7400.0,
+    "iban_tr_unmasked_rows": 0.0,
+    "email_unmasked_rows": 2.0,
+    "turkish_mobile_unmasked_rows": 1254.0,
+    "tckn_labeled_11_digits_rows": 49.0,
+    "card_labeled_13_19_digits_rows": 387.0,
+    "mask_tckn_rows": 15.0,
+    "mask_iban_rows": 18.0,
+    "mask_telefon_rows": 12.0,
+    "mask_eposta_rows": 26.0,
+    "mask_kart_rows": 15.0
+  },
+  "by_year": [
+    {
+      "year": 1997,
+      "rows": 7,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 1998,
+      "rows": 3,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 1999,
+      "rows": 34,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2000,
+      "rows": 103,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2001,
+      "rows": 185,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2002,
+      "rows": 121,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2003,
+      "rows": 349,
+      "rows_with_dataset_masking": 0,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2004,
+      "rows": 651,
+      "rows_with_dataset_masking": 1,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 1,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 0
+    },
+    {
+      "year": 2005,
+      "rows": 1887,
+      "rows_with_dataset_masking": 3,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 0,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 1
+    },
+    {
+      "year": 2006,
+      "rows": 123047,
+      "rows_with_dataset_masking": 4,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 2,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 26
+    },
+    {
+      "year": 2007,
+      "rows": 156830,
+      "rows_with_dataset_masking": 7,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 9,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 25
+    },
+    {
+      "year": 2008,
+      "rows": 166009,
+      "rows_with_dataset_masking": 15,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 2,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 3
+    },
+    {
+      "year": 2009,
+      "rows": 172722,
+      "rows_with_dataset_masking": 21,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 2,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 6
+    },
+    {
+      "year": 2010,
+      "rows": 481664,
+      "rows_with_dataset_masking": 55,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 15,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 8
+    },
+    {
+      "year": 2011,
+      "rows": 657011,
+      "rows_with_dataset_masking": 76,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 25,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 13
+    },
+    {
+      "year": 2012,
+      "rows": 885295,
+      "rows_with_dataset_masking": 178,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 43,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 22
+    },
+    {
+      "year": 2013,
+      "rows": 872608,
+      "rows_with_dataset_masking": 233,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 65,
+      "tckn_labeled_rows": 2,
+      "card_labeled_rows": 17
+    },
+    {
+      "year": 2014,
+      "rows": 883429,
+      "rows_with_dataset_masking": 265,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 74,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 23
+    },
+    {
+      "year": 2015,
+      "rows": 904114,
+      "rows_with_dataset_masking": 209,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 81,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 15
+    },
+    {
+      "year": 2016,
+      "rows": 654309,
+      "rows_with_dataset_masking": 182,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 83,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 12
+    },
+    {
+      "year": 2017,
+      "rows": 628788,
+      "rows_with_dataset_masking": 202,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 66,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 23
+    },
+    {
+      "year": 2018,
+      "rows": 511482,
+      "rows_with_dataset_masking": 266,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 82,
+      "tckn_labeled_rows": 2,
+      "card_labeled_rows": 13
+    },
+    {
+      "year": 2019,
+      "rows": 523722,
+      "rows_with_dataset_masking": 319,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 100,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 14
+    },
+    {
+      "year": 2020,
+      "rows": 445968,
+      "rows_with_dataset_masking": 288,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 98,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 12
+    },
+    {
+      "year": 2021,
+      "rows": 481139,
+      "rows_with_dataset_masking": 378,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 130,
+      "tckn_labeled_rows": 3,
+      "card_labeled_rows": 21
+    },
+    {
+      "year": 2022,
+      "rows": 355551,
+      "rows_with_dataset_masking": 336,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 101,
+      "tckn_labeled_rows": 7,
+      "card_labeled_rows": 10
+    },
+    {
+      "year": 2023,
+      "rows": 264489,
+      "rows_with_dataset_masking": 671,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 2,
+      "phone_unmasked_rows": 150,
+      "tckn_labeled_rows": 12,
+      "card_labeled_rows": 70
+    },
+    {
+      "year": 2024,
+      "rows": 298654,
+      "rows_with_dataset_masking": 521,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 88,
+      "tckn_labeled_rows": 16,
+      "card_labeled_rows": 33
+    },
+    {
+      "year": 2025,
+      "rows": 313478,
+      "rows_with_dataset_masking": 117,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 36,
+      "tckn_labeled_rows": 1,
+      "card_labeled_rows": 18
+    },
+    {
+      "year": 2026,
+      "rows": 36496,
+      "rows_with_dataset_masking": 3,
+      "iban_unmasked_rows": 0,
+      "email_unmasked_rows": 0,
+      "phone_unmasked_rows": 1,
+      "tckn_labeled_rows": 0,
+      "card_labeled_rows": 2
+    }
+  ]
+}
