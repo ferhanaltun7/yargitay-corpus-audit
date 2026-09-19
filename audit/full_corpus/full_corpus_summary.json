@@ -1,0 +1,158 @@
+{
+  "source_manifest_revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "files_found": 17,
+  "files_expected": 17,
+  "schema_identical_across_files": true,
+  "parquet_metadata_rows": 9820145,
+  "expected_rows": 9820145,
+  "row_count_match": true,
+  "row_groups": 180,
+  "file_rows": [
+    {
+      "file": "0000.parquet",
+      "rows": 800812,
+      "row_groups": 12,
+      "size_bytes": 203262814
+    },
+    {
+      "file": "0001.parquet",
+      "rows": 959811,
+      "row_groups": 12,
+      "size_bytes": 212822247
+    },
+    {
+      "file": "0002.parquet",
+      "rows": 791936,
+      "row_groups": 11,
+      "size_bytes": 197307530
+    },
+    {
+      "file": "0003.parquet",
+      "rows": 709233,
+      "row_groups": 11,
+      "size_bytes": 204007228
+    },
+    {
+      "file": "0004.parquet",
+      "rows": 680161,
+      "row_groups": 11,
+      "size_bytes": 208620752
+    },
+    {
+      "file": "0005.parquet",
+      "rows": 786686,
+      "row_groups": 11,
+      "size_bytes": 207822181
+    },
+    {
+      "file": "0006.parquet",
+      "rows": 634158,
+      "row_groups": 11,
+      "size_bytes": 200246321
+    },
+    {
+      "file": "0007.parquet",
+      "rows": 765079,
+      "row_groups": 12,
+      "size_bytes": 209990435
+    },
+    {
+      "file": "0008.parquet",
+      "rows": 658605,
+      "row_groups": 11,
+      "size_bytes": 210041383
+    },
+    {
+      "file": "0009.parquet",
+      "rows": 544106,
+      "row_groups": 10,
+      "size_bytes": 194213547
+    },
+    {
+      "file": "0010.parquet",
+      "rows": 591184,
+      "row_groups": 11,
+      "size_bytes": 203451140
+    },
+    {
+      "file": "0011.parquet",
+      "rows": 596815,
+      "row_groups": 11,
+      "size_bytes": 192455102
+    },
+    {
+      "file": "0012.parquet",
+      "rows": 402290,
+      "row_groups": 10,
+      "size_bytes": 190238895
+    },
+    {
+      "file": "0013.parquet",
+      "rows": 221099,
+      "row_groups": 10,
+      "size_bytes": 195441702
+    },
+    {
+      "file": "0014.parquet",
+      "rows": 265920,
+      "row_groups": 11,
+      "size_bytes": 195320269
+    },
+    {
+      "file": "0015.parquet",
+      "rows": 313349,
+      "row_groups": 11,
+      "size_bytes": 187952620
+    },
+    {
+      "file": "0016.parquet",
+      "rows": 98901,
+      "row_groups": 4,
+      "size_bytes": 57477144
+    }
+  ],
+  "structural": {
+    "rows": 9820145.0,
+    "empty_id": 0.0,
+    "empty_source": 0.0,
+    "empty_document_id": 0.0,
+    "empty_court": 0.0,
+    "empty_esas": 0.0,
+    "empty_karar": 0.0,
+    "empty_date": 0.0,
+    "empty_year": 0.0,
+    "empty_month": 0.0,
+    "empty_text": 0.0,
+    "empty_text_len": 0.0,
+    "empty_raw_sha256": 0.0,
+    "wrong_source": 0.0,
+    "text_len_mismatch": 0.0,
+    "min_year": 1997.0,
+    "max_year": 2026.0,
+    "min_chars": 59.0,
+    "p01_chars": 404.0,
+    "median_chars": 1114.0,
+    "p99_chars": 11880.0,
+    "max_chars": 2625161.0,
+    "avg_chars": 1990.341637623477,
+    "lt_100_chars": 383.0,
+    "lt_300_chars": 6636.0,
+    "lt_500_chars": 364610.0
+  },
+  "duplicates": {
+    "id_duplicate_excess": 0,
+    "document_id_duplicate_excess": 0,
+    "raw_sha256_duplicate_excess": 0,
+    "metadata_duplicate_excess": 0
+  },
+  "quality_flags": {
+    "placeholder_ilgili_ceza_mah": 0,
+    "placeholder_dava_turu": 878,
+    "placeholder_deneme": 1,
+    "any_known_placeholder": 879,
+    "suspicious_court": 7,
+    "has_karar": 9818151,
+    "has_esas": 3521370,
+    "has_terminal_marker": 7654898
+  }
+}

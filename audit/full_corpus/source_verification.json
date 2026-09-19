@@ -1,0 +1,162 @@
+{
+  "mirror": "serdarsrts/turkish-court-decisions-duplicate",
+  "original_revision": "4df66ee63c4adbcae8434787718c7b42381a69dd",
+  "all_17_sha256_match": true,
+  "all_17_size_match": true,
+  "total_bytes": 3270671310,
+  "files": [
+    {
+      "file": "0000.parquet",
+      "size_bytes": 203262814,
+      "expected_size_bytes": 203262814,
+      "size_match": true,
+      "sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+      "expected_sha256": "bf99c9c1b9af7688bc1fc254c8130972a88f0fc66cc796a63f2d3c716f64680d",
+      "sha256_match": true
+    },
+    {
+      "file": "0001.parquet",
+      "size_bytes": 212822247,
+      "expected_size_bytes": 212822247,
+      "size_match": true,
+      "sha256": "ba2aefda121c0c47e069050efde7c4f7979fd95cdab4bf1f075f98882de9e018",
+      "expected_sha256": "ba2aefda121c0c47e069050efde7c4f7979fd95cdab4bf1f075f98882de9e018",
+      "sha256_match": true
+    },
+    {
+      "file": "0002.parquet",
+      "size_bytes": 197307530,
+      "expected_size_bytes": 197307530,
+      "size_match": true,
+      "sha256": "c13d9b719c03759a07a734f94d926196b52465d21da27107940f2e1c6aa11d78",
+      "expected_sha256": "c13d9b719c03759a07a734f94d926196b52465d21da27107940f2e1c6aa11d78",
+      "sha256_match": true
+    },
+    {
+      "file": "0003.parquet",
+      "size_bytes": 204007228,
+      "expected_size_bytes": 204007228,
+      "size_match": true,
+      "sha256": "cf29d726b1626043814be0e552c6f91e0a755f0363d917e1d5b85ddc40fce291",
+      "expected_sha256": "cf29d726b1626043814be0e552c6f91e0a755f0363d917e1d5b85ddc40fce291",
+      "sha256_match": true
+    },
+    {
+      "file": "0004.parquet",
+      "size_bytes": 208620752,
+      "expected_size_bytes": 208620752,
+      "size_match": true,
+      "sha256": "f00dfb6f832d99cf68e0566fe55c3eb8a3d5cebf5c092b15e559c5813b46be8c",
+      "expected_sha256": "f00dfb6f832d99cf68e0566fe55c3eb8a3d5cebf5c092b15e559c5813b46be8c",
+      "sha256_match": true
+    },
+    {
+      "file": "0005.parquet",
+      "size_bytes": 207822181,
+      "expected_size_bytes": 207822181,
+      "size_match": true,
+      "sha256": "51cbe579050e9bd665925a41a1a1fd10a29bd1615cf951c2b8cc6f785c483ebc",
+      "expected_sha256": "51cbe579050e9bd665925a41a1a1fd10a29bd1615cf951c2b8cc6f785c483ebc",
+      "sha256_match": true
+    },
+    {
+      "file": "0006.parquet",
+      "size_bytes": 200246321,
+      "expected_size_bytes": 200246321,
+      "size_match": true,
+      "sha256": "3e82bd819662163ba7ae488e25622e3363b68e397363bf064ea84e0263f7bc76",
+      "expected_sha256": "3e82bd819662163ba7ae488e25622e3363b68e397363bf064ea84e0263f7bc76",
+      "sha256_match": true
+    },
+    {
+      "file": "0007.parquet",
+      "size_bytes": 209990435,
+      "expected_size_bytes": 209990435,
+      "size_match": true,
+      "sha256": "75f28f4a67681969240218fd638f927b3b5c889dfd50710fcf1d95adeed046c7",
+      "expected_sha256": "75f28f4a67681969240218fd638f927b3b5c889dfd50710fcf1d95adeed046c7",
+      "sha256_match": true
+    },
+    {
+      "file": "0008.parquet",
+      "size_bytes": 210041383,
+      "expected_size_bytes": 210041383,
+      "size_match": true,
+      "sha256": "982e5aa49df1b6f99185c53b02f1b06ae0559d189d7fb00070c9857355bd0726",
+      "expected_sha256": "982e5aa49df1b6f99185c53b02f1b06ae0559d189d7fb00070c9857355bd0726",
+      "sha256_match": true
+    },
+    {
+      "file": "0009.parquet",
+      "size_bytes": 194213547,
+      "expected_size_bytes": 194213547,
+      "size_match": true,
+      "sha256": "53a9afe88fd89390c615d723dd78eca84fd10fc5781ef564ec8e3648b492b56d",
+      "expected_sha256": "53a9afe88fd89390c615d723dd78eca84fd10fc5781ef564ec8e3648b492b56d",
+      "sha256_match": true
+    },
+    {
+      "file": "0010.parquet",
+      "size_bytes": 203451140,
+      "expected_size_bytes": 203451140,
+      "size_match": true,
+      "sha256": "d497b1714b614dbbd21402bb39382dfdea68444f2f38bf040c3f72435bc34f77",
+      "expected_sha256": "d497b1714b614dbbd21402bb39382dfdea68444f2f38bf040c3f72435bc34f77",
+      "sha256_match": true
+    },
+    {
+      "file": "0011.parquet",
+      "size_bytes": 192455102,
+      "expected_size_bytes": 192455102,
+      "size_match": true,
+      "sha256": "d2e18ae058a6dc94c606612c8d12bce6a27ed62f7e6719f92cb69b2d41f0a3da",
+      "expected_sha256": "d2e18ae058a6dc94c606612c8d12bce6a27ed62f7e6719f92cb69b2d41f0a3da",
+      "sha256_match": true
+    },
+    {
+      "file": "0012.parquet",
+      "size_bytes": 190238895,
+      "expected_size_bytes": 190238895,
+      "size_match": true,
+      "sha256": "1144f300c68ea4c8fdb281da53bab340539bafbe098df77f7a47aaa1b23bc340",
+      "expected_sha256": "1144f300c68ea4c8fdb281da53bab340539bafbe098df77f7a47aaa1b23bc340",
+      "sha256_match": true
+    },
+    {
+      "file": "0013.parquet",
+      "size_bytes": 195441702,
+      "expected_size_bytes": 195441702,
+      "size_match": true,
+      "sha256": "010e63a4c91f9709a20d9330bbf2998ddbb39e643c82ca8f80e53c05b432c111",
+      "expected_sha256": "010e63a4c91f9709a20d9330bbf2998ddbb39e643c82ca8f80e53c05b432c111",
+      "sha256_match": true
+    },
+    {
+      "file": "0014.parquet",
+      "size_bytes": 195320269,
+      "expected_size_bytes": 195320269,
+      "size_match": true,
+      "sha256": "1e89eb74effaad1f32547e1d3cead1672dc012bc1138737e025ff20c6a66bd95",
+      "expected_sha256": "1e89eb74effaad1f32547e1d3cead1672dc012bc1138737e025ff20c6a66bd95",
+      "sha256_match": true
+    },
+    {
+      "file": "0015.parquet",
+      "size_bytes": 187952620,
+      "expected_size_bytes": 187952620,
+      "size_match": true,
+      "sha256": "2ba1231dd25ea600cea4ec9d54dc3d718c51df28a21ecc3b5868dea63338a9eb",
+      "expected_sha256": "2ba1231dd25ea600cea4ec9d54dc3d718c51df28a21ecc3b5868dea63338a9eb",
+      "sha256_match": true
+    },
+    {
+      "file": "0016.parquet",
+      "size_bytes": 57477144,
+      "expected_size_bytes": 57477144,
+      "size_match": true,
+      "sha256": "205481193de56643c908421a5811c8ff3907894c2d83db5680cf22dc1447acd2",
+      "expected_sha256": "205481193de56643c908421a5811c8ff3907894c2d83db5680cf22dc1447acd2",
+      "sha256_match": true
+    }
+  ]
+}
