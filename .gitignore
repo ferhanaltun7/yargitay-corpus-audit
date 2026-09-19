@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+data/tmp/
+audit/*.parquet
+audit/*.duckdb
+reports/*.html
+.DS_Store
