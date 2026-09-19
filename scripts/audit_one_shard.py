@@ -71,12 +71,36 @@ def main():
         result["text_stats"] = con.execute(
             f"""SELECT
                     count(*) FILTER (WHERE text IS NULL OR length(trim(text)) = 0) AS empty_text,
+                    count(*) FILTER (WHERE length(text) < 100) AS lt_100_chars,
+                    count(*) FILTER (WHERE length(text) < 300) AS lt_300_chars,
+                    count(*) FILTER (WHERE length(text) < 500) AS lt_500_chars,
                     min(length(text)) AS min_chars,
                     approx_quantile(length(text), 0.01) AS p01_chars,
                     approx_quantile(length(text), 0.5) AS median_chars,
                     approx_quantile(length(text), 0.99) AS p99_chars,
                     max(length(text)) AS max_chars,
                     avg(length(text)) AS avg_chars
+                FROM {src}"""
+        ).fetchdf().iloc[0].to_dict()
+
+        con.execute(
+            f"""COPY (
+                    SELECT id, document_id, court, esas_no, karar_no, karar_tarihi,
+                           year, length(text) AS chars, text
+                    FROM {src}
+                    WHERE length(text) < 300
+                    ORDER BY chars ASC, id
+                    LIMIT 200
+                ) TO '{(out / "short_text_examples.csv").as_posix()}'
+                (HEADER, DELIMITER ',')"""
+        )
+
+        result["decision_marker_stats"] = con.execute(
+            f"""SELECT
+                    count(*) FILTER (WHERE lower(text) LIKE '%yargıtay%' OR lower(text) LIKE '%yargitay%') AS has_yargitay,
+                    count(*) FILTER (WHERE lower(text) LIKE '%karar%') AS has_karar,
+                    count(*) FILTER (WHERE lower(text) LIKE '%esas%') AS has_esas,
+                    count(*) FILTER (WHERE lower(text) LIKE '%sonuç%' OR lower(text) LIKE '%sonuc%' OR lower(text) LIKE '%hüküm%' OR lower(text) LIKE '%hukum%') AS has_terminal_marker
                 FROM {src}"""
         ).fetchdf().iloc[0].to_dict()
 
@@ -159,6 +183,9 @@ def main():
         ts = result["text_stats"]
         md += [
             f"- Empty text rows: **{int(ts['empty_text']):,}**",
+            f"- Text <100 chars: **{int(ts['lt_100_chars']):,}**",
+            f"- Text <300 chars: **{int(ts['lt_300_chars']):,}**",
+            f"- Text <500 chars: **{int(ts['lt_500_chars']):,}**",
             f"- Median text chars: **{float(ts['median_chars']):,.0f}**",
             f"- Min / max text chars: **{int(ts['min_chars']):,} / {int(ts['max_chars']):,}**",
         ]
